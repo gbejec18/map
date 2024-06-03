@@ -1,10 +1,13 @@
 <div class="card card-outline card-primary">
 	<div class="card-header">
+	<h1 class="print-only" style="position: relative; z-index: 1; text-align: center; color: #333;">Municipality of Dalaguete</h1>
 		<h3 class="card-title">List of Appointments</h3>
-		<button class="btn btn-default float-right" id="printBtn"><i class="fa fa-print"></i> Print</button>
+		<button class="btn btn-sm btn-primary btn-flat print-exclude float-right" onclick="window.print()"><i class="fa fa-print"></i> Print</button>
 	</div>
 	<div class="card-body">
 		<div class="container-fluid">
+		
+
         <div class="container-fluid">
 			<table class="table table-hover table-striped table-bordered">
 				<colgroup>
@@ -23,7 +26,7 @@
 						<th>Requester</th>
 						<th>Desired Time</th>
 						<th>Status</th>
-						<th>Action</th>
+						<th class="print-exclude">Action</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -31,13 +34,15 @@
 						$i = 1;
 						$qry = $conn->query("SELECT * from `appointment_list` order by unix_timestamp(`date_created`) desc ");
 						while($row = $qry->fetch_assoc()):
+						$desired_time= date("g:i A", strtotime($row['time']));
 					?>
 						<tr>
 							<td class="text-center"><?php echo $i++; ?></td>
 							<td class=""><?php echo date("Y-m-d",strtotime($row['date_created'])) ?></td>
 							<td><?php echo ($row['code']) ?></td>
 							<td class=""><p class="truncate-1"><?php echo ucwords($row['owner_name']) ?></p></td>
-							<td class=""><p class="truncate-1"><?php echo ucwords($row['time']) ?></p></td>
+							<td class=""><p class="truncate-1"><?php echo $desired_time ?></p></td>
+
 							<td class="text-center">
 								<?php 
 									switch ($row['status']){
@@ -58,7 +63,7 @@
 							</td>
 							
 							<td align="center">
-								 <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
+								 <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon print-exclude" data-toggle="dropdown">
 				                  		Action
 				                    <span class="sr-only">Toggle Dropdown</span>
 				                  </button>
@@ -74,23 +79,39 @@
 			</table>
 		</div>
 		</div>
+		
+	
 	</div>
 </div>
 <style>
-    #printBtn {
-        float: right;
-        margin-top: 3px;
-        margin-right: 10px;
-	}
-	
-    /* CSS to hide buttons when printing */
-    @media print {
-        #printBtn {
-            display: none;
+	  /* Define styles for print */
+	  @media print {
+        .print-exclude,
+        .dataTables_filter,
+        .dataTables_paginate,
+        .dataTables_length,
+        .dataTables_info {
+            display: none !important;
+        }
+        /* Style for logo and text */
+        .print-logo {
+            position: relative;
+            /* Optional: ensure the logo starts on a new page */
         }
     }
-        
-       
+
+	/* Hide the text in normal view */
+    .print-only {
+        display: none;
+    }
+
+    /* Display the text only in print preview */
+    @media print {
+        .print-only {
+            display: block !important;
+        }
+    }
+
 </style>
 
 <script>
@@ -104,38 +125,9 @@
                 { orderable: false, targets: 5 }
             ],
         });
-  // JavaScript for printing functionality
-  	$('#printBtn').on('click', function() {
-            printContent();
-        });
-		   // JavaScript for printing functionality
-		   $('#printBtn').on('click', function() {
-            printContent();
-        });
 
-		function printContent() {
-            var title = $('.card-title').text(); // Get the title
-            var content = $('.card-body .table').clone(); // Clone the table
-            content.find('th:last-child, td:last-child').remove(); // Remove the last column (Action)
-            var printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.open();
-                printWindow.document.write('<html><head><title>List of Appointments</title>');
-                printWindow.document.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">');
-                printWindow.document.write('</head><body>');
-                printWindow.document.write('<h3>' + title + '</h3>'); // Add the title
-                printWindow.document.write(content[0].outerHTML);
-                printWindow.document.write('</body></html>');
-                printWindow.document.close();
-                printWindow.print();
-            } else {
-                console.error('Failed to open print window');
-            }
-        }
     })
-     
 
-		
 	function delete_appointment($id){
 		start_loader();
 		$.ajax({
