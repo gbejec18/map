@@ -1,4 +1,1 @@
-Hizon Derulo
-JJ Helterbrand
-Abay Richmar
-RardomPotek
+by Harvey Cutie and RardomPotek
