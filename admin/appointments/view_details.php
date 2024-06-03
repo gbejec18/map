@@ -20,10 +20,12 @@ if(isset($_GET['id'])){
     echo "<script>alert('Appointment Request ID is required'); location.replace('./?page=appointments');</script>";
 }
 
-$desired_time= date("g:i A", strtotime($time));
-$other_time= date("g:i A", strtotime($other_time));
-$venue = (empty($venue)) ? "N/A" : $venue;
-$confirmed_time_formatted = empty($confirmed_time) ? "N/A" : date("g:i A", strtotime($confirmed_time));
+$desired_time = date("g:i A", strtotime($time));
+if (!empty($confirmed_time)) {
+    $confirmed_time_formatted = date("g:i A", strtotime($confirmed_time));
+} else {
+    $confirmed_time_formatted = "N/A"; // or any default value you prefer
+}
 
 ?>
 <style>
